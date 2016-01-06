@@ -1,15 +1,16 @@
 from flask import Flask
 from flask import render_template
+from flask import request
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
-@app.route('/add')
+@app.route('/add', methods=['POST'])
 def add():
-    pass
+    return request.form
 
 @app.route('/<target>')
 def redirect(target):
