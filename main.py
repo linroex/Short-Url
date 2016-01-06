@@ -1,7 +1,7 @@
 import sys
 
 from flask import Flask
-from flask import request, jsonify, render_template
+from flask import request, jsonify, render_template, redirect
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -37,8 +37,12 @@ def add():
     return jsonify({'url': request.url_root + key})
 
 @app.route('/<key>')
-def redirect(key):
-    pass
+def go(key):
+    result = Map.query.get(key)
+    if result == None:
+        return jsonify({'code': 'Not Found'})
+    else:
+        return redirect(Map.query.get(key).url)
 
 if __name__ == '__main__':
     if sys.argv[1] == 'init':
