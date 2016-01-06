@@ -1,8 +1,7 @@
 import sys
 
 from flask import Flask
-from flask import render_template
-from flask import request
+from flask import request, jsonify, render_template
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -35,8 +34,10 @@ def add():
     db.session.add(Map(key, url))
     db.session.commit()
 
-@app.route('/<target>')
-def redirect(target):
+    return jsonify({'url': request.url_root + key})
+
+@app.route('/<key>')
+def redirect(key):
     pass
 
 if __name__ == '__main__':
