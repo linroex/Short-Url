@@ -1,8 +1,27 @@
+import sys
+
 from flask import Flask
 from flask import render_template
 from flask import request
 
+from flask_sqlalchemy import SQLAlchemy
+
+import short_url
+
 app = Flask(__name__)
+
+app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', True)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+
+db = SQLAlchemy(app)
+
+class Map(db.Model):
+    key = db.Column(db.String(10), primary_key=True)
+    url = db.Column(db.Text())
+
+    def __init__(self, key, url):
+        self.key = key
+        self.url = url
 
 @app.route('/', methods=['GET'])
 def index():
@@ -10,11 +29,20 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add():
-    return request.form
+    key = short_url.encode_url(len(Map.query.all()))
+    url = request.form['url']
+
+    db.session.add(Map(key, url))
+    db.session.commit()
 
 @app.route('/<target>')
 def redirect(target):
     pass
 
 if __name__ == '__main__':
-    app.run()
+    if sys.argv[1] == 'init':
+        db.create_all()
+    elif sys.argv[1] == 'run':
+        app.run()
+    elif sys.argv[1] == 'test':
+        pass
