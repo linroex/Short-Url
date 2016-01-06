@@ -6,6 +6,7 @@ from flask import request, jsonify, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 import short_url
+import helper
 
 app = Flask(__name__)
 
@@ -27,6 +28,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/add', methods=['POST'])
+@helper.jsonp
 def add():
     key = short_url.encode_url(len(Map.query.all()))
     url = request.form['url']
