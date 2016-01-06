@@ -2,9 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Short Url</title>
+    <title>NTUST Shorten URL</title>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('input:submit').click(function(e) {
+                e.preventDefault();
+
+                $.post('/add', $('form').serialize(), function(resp) {
+                    $("#result").text(resp.url);
+                })
+            })
+        })
+    </script>
 </head>
 <body>
     <h1>Hi</h1>
+    <p>這是台科人專屬的短網址服務，目前十分簡易，歡迎有志參與改善的朋友和<a target="_blank" href="https://www.facebook.com/linroex">我</a>聯絡</p>
+
+    <form action="add" method="post">
+        請輸入要縮短的網址： <input type="text" name="url">
+        <input type="submit" value="送出">
+    </form>
+    <br>
+    <br>
+    <br>
+    結果：<p id="result"></p>
 </body>
 </html>
