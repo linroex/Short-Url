@@ -10,7 +10,7 @@
                 e.preventDefault();
 
                 $.post('/add', $('form').serialize(), function(resp) {
-                    $('input:text').text('');
+                    $('input:text').val('');
                     $('#result').text(resp.url);
                 })
             })
