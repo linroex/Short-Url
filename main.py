@@ -31,11 +31,15 @@ def index():
 @app.route('/add', methods=['POST'])
 @Helper.jsonp
 def add():
+
     key = short_url.encode_url(len(Map.query.all()))
     url = request.form['url']
 
-    db.session.add(Map(key, url))
-    db.session.commit()
+    if len(Map.query.filter_by(url = url).all()) >= 1:
+        key = Map.query.filter_by(url = url).first().key
+    else:
+        db.session.add(Map(key, url))
+        db.session.commit()
 
     return jsonify({'url': request.url_root + key})
 
@@ -51,4 +55,4 @@ if __name__ == '__main__':
     if sys.argv[1] == 'init':
         db.create_all()
     elif sys.argv[1] == 'run':
-        app.run()
+        app.run(debug = True)
