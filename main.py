@@ -29,6 +29,15 @@ class Map(db.Model):
         self.url = url
         self.created = datetime.now()
 
+class Visit(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    ip = db.Column(db.String(15))
+    visit_time = db.Column(db.DateTime())
+
+    def __init__(self, ip):
+        self.ip = ip
+        self.visit_time = datetime.now()
+
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
@@ -51,7 +60,9 @@ def add():
         key = exists_query.key
     else:
         db.session.add(Map(key, url))
-        db.session.commit()
+
+    db.session.add(Visit(request.environ['REMOTE_ADDR']))
+    db.session.commit()
 
     return jsonify({'url': request.url_root + key})
 
