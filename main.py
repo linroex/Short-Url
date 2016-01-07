@@ -1,15 +1,16 @@
 import sys
 
+import short_url
+import Helper
+import Config
+
 from urllib.parse import urlparse
+from datetime import datetime
 
 from flask import Flask
 from flask import request, jsonify, render_template, redirect
 
 from flask_sqlalchemy import SQLAlchemy
-
-import short_url
-import Helper
-import Config
 
 app = Flask(__name__)
 
@@ -21,10 +22,12 @@ db = SQLAlchemy(app)
 class Map(db.Model):
     key = db.Column(db.String(10), primary_key=True)
     url = db.Column(db.Text())
+    created = db.Column(db.DateTime())
 
     def __init__(self, key, url):
         self.key = key
         self.url = url
+        self.created = datetime.now()
 
 @app.route('/', methods=['GET'])
 def index():
@@ -33,8 +36,6 @@ def index():
 @app.route('/add', methods=['POST'])
 @Helper.jsonp
 def add():
-
-    print(urlparse(request.form['url']).geturl())
 
     if request.form['url'].strip() == "":
         return jsonify({'message': 'Url is empty'})
