@@ -39,7 +39,7 @@ def add():
 
     return jsonify({'url': request.url_root + key})
 
-@app.route('/<key>')
+@app.route('/<key>', methods=['GET'])
 def go(key):
     result = Map.query.get(key)
     if result == None:
@@ -52,5 +52,3 @@ if __name__ == '__main__':
         db.create_all()
     elif sys.argv[1] == 'run':
         app.run()
-    elif sys.argv[1] == 'test':
-        pass
