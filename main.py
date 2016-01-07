@@ -72,7 +72,7 @@ def add():
     else:
         db.session.add(Map(key, url))
 
-    # db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add'))
+    db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add'))
     db.session.commit()
 
     return jsonify({'url': request.url_root + key})
