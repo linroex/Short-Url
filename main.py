@@ -6,12 +6,13 @@ from flask import request, jsonify, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 import short_url
-import helper
+import Helper
+import Config
 
 app = Flask(__name__)
 
 app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', True)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = Config.config['db_connection_string']
 
 db = SQLAlchemy(app)
 
@@ -28,7 +29,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/add', methods=['POST'])
-@helper.jsonp
+@Helper.jsonp
 def add():
     key = short_url.encode_url(len(Map.query.all()))
     url = request.form['url']
