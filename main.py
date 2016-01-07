@@ -1,5 +1,7 @@
 import sys
 
+from urllib.parse import urlparse
+
 from flask import Flask
 from flask import request, jsonify, render_template, redirect
 
@@ -32,11 +34,20 @@ def index():
 @Helper.jsonp
 def add():
 
+    print(urlparse(request.form['url']).geturl())
+
+    if request.form['url'].strip() == "":
+        return jsonify({'message': 'Url is empty'})
+    elif urlparse(request.form['url']).netloc.strip() == '':
+        return jsonify({'message': 'Url is illegal'})
+
     key = short_url.encode_url(len(Map.query.all()))
     url = request.form['url']
 
-    if len(Map.query.filter_by(url = url).all()) >= 1:
-        key = Map.query.filter_by(url = url).first().key
+    exists_query = Map.query.filter_by(url = url).first()
+    
+    if exists_query != None:
+        key = exists_query.key
     else:
         db.session.add(Map(key, url))
         db.session.commit()
@@ -47,7 +58,7 @@ def add():
 def go(key):
     result = Map.query.get(key)
     if result == None:
-        return jsonify({'code': 'Not Found'})
+        return jsonify({'message': 'Not Found'})
     else:
         return redirect(Map.query.get(key).url)
 
