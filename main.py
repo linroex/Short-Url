@@ -33,9 +33,11 @@ class Visit(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ip = db.Column(db.String(15))
     visit_time = db.Column(db.DateTime())
+    action = db.Column(db.Enum('add', 'go'))
 
-    def __init__(self, ip):
+    def __init__(self, ip, action):
         self.ip = ip
+        self.action = action
         self.visit_time = datetime.now()
 
 @app.route('/', methods=['GET'])
@@ -61,7 +63,7 @@ def add():
     else:
         db.session.add(Map(key, url))
 
-    db.session.add(Visit(request.environ['REMOTE_ADDR']))
+    db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add'))
     db.session.commit()
 
     return jsonify({'url': request.url_root + key})
@@ -72,10 +74,14 @@ def go(key):
     if result == None:
         return jsonify({'message': 'Not Found'})
     else:
+        db.session.add(Visit(request.environ['REMOTE_ADDR'], 'go'))
+        db.session.commit()
+
         return redirect(result.url)
 
 if __name__ == '__main__':
     if sys.argv[1] == 'init':
+        db.drop_all()
         db.create_all()
     elif sys.argv[1] == 'run':
         app.run(debug = True)
