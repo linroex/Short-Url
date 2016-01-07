@@ -2,10 +2,11 @@ import sys
 
 import short_url
 import Helper
-import Config
 
 from urllib.parse import urlparse
 from datetime import datetime
+
+from Config import config
 
 from flask import Flask
 from flask import request, jsonify, render_template, redirect
@@ -15,7 +16,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', True)
-app.config['SQLALCHEMY_DATABASE_URI'] = Config.config['db_connection_string']
+app.config['SQLALCHEMY_DATABASE_URI'] = config['db_connection_string']
 
 db = SQLAlchemy(app)
 
@@ -48,10 +49,17 @@ def index():
 @Helper.jsonp
 def add():
 
+    # URL Validate
     if request.form['url'].strip() == "":
         return jsonify({'message': 'Url is empty'})
     elif urlparse(request.form['url']).netloc.strip() == '':
         return jsonify({'message': 'Url is illegal'})
+
+    # Usage check
+    user_today_usage = len(Visit.query.filter(Visit.action == 'add', Visit.ip == request.environ['REMOTE_ADDR'], Visit.visit_time >= datetime.now().date()).all())
+    
+    if user_today_usage > config['add_quota_per']:
+        return jsonify({'message': 'Today usage is exceed'})
 
     key = short_url.encode_url(len(Map.query.all()))
     url = request.form['url']
@@ -59,11 +67,12 @@ def add():
     exists_query = Map.query.filter_by(url = url).first()
     
     if exists_query != None:
+        # If url is exists
         key = exists_query.key
     else:
         db.session.add(Map(key, url))
 
-    db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add'))
+    # db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add'))
     db.session.commit()
 
     return jsonify({'url': request.url_root + key})
