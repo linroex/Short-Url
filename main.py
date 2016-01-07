@@ -61,7 +61,7 @@ def go(key):
     if result == None:
         return jsonify({'message': 'Not Found'})
     else:
-        return redirect(Map.query.get(key).url)
+        return redirect(result.url)
 
 if __name__ == '__main__':
     if sys.argv[1] == 'init':
