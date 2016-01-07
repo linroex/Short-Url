@@ -3,31 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <title>NTUST Shorten URL</title>
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     <script>
-        $(document).ready(function() {
-            $('input:submit').click(function(e) {
-                e.preventDefault();
+    function getShortUrl(urls,i){
+        var shortUrl="";
+        if(urls.length<=i)
+        {
+            return 0;
+        }
+        $.ajax({
+               　　type: "post",
+               　　url: "./add",
+                   data:{'url':urls[i]},
+                   dataType: "json",
+               　　success: function(output){
+                        $("#result").html($("#result").html()+urls[i]+" to "+'<a href="'+output.url+'">'+output.url+'</a><br>');
+                        return 0;
+            　　　},
+                   error: function(){
 
-                $.post('/add', $('form').serialize(), function(resp) {
-                    $('input:text').val('');
-                    $('#result').text(resp.url);
-                })
-            })
-        })
+                        $("#result").html($("#result").html()+urls[i]+" to "+'Error!');
+                        return -1;
+        　　　    },
+                  complete: function(){getShortUrl(urls,i+1);}
+               });
+    }
+    function sendRequest(){
+        if($('#urls').val()=="")
+        {
+            $('.resultbox').hide();
+            return -1;    
+        }
+        else
+        {
+            $('.resultbox').show();
+        }
+        
+        getShortUrl($('#urls').val().split('\n'),0);
+
+    }
     </script>
+    <style>
+    .resultbox{
+        display: none;
+    }
+    </style>
 </head>
 <body>
-    <h1>Hi</h1>
-    <p>這是台科人專屬的短網址服務，目前十分簡易，歡迎有志參與改善的朋友和<a target="_blank" href="https://www.facebook.com/linroex">我</a>聯絡</p>
-
-    <form action="add" method="post">
-        請輸入要縮短的網址： <input type="text" name="url">
-        <input type="submit" value="送出">
-    </form>
-    <br>
-    <br>
-    <br>
-    結果：<p id="result"></p>
+    <div class="container">
+        <div class="row">
+                <div  id="content" style="margin-top:20px; background-color:lightblue; padding:20px; 10px; 20px; 10px;">
+                    <h1>Hi</h1>
+                    <p>
+                        這是台科人專屬的短網址服務，目前十分簡易，歡迎有志參與改善的朋友和<a target="_blank" href="https://www.facebook.com/linroex">我</a>聯絡<br>  請在下方輸入要縮的網址，多行網址請換行。
+                    </p>
+                    <div class="form-group">
+                        <label for="comment">網址:</label>
+                        <textarea class="form-control" rows="5" id="urls"></textarea>
+                        <button type="button" style="margin-top:10px;" class="center-block btn btn-default" onclick="sendRequest()">Submit</button>
+                    </div>
+                    <h4 class="resultbox">Result:</h4>
+                    <textarea id="result" class="resultbox form-control"></textarea>
+                </div>
+        </div>
+    </div>
 </body>
 </html>
