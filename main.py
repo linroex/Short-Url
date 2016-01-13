@@ -61,7 +61,7 @@ def add():
     if user_today_usage > config['add_quota_per']:
         return jsonify({'message': 'Today usage is exceed'})
 
-    key = short_url.encode_url(len(Map.query.all()))
+    key = short_url.encode_url(len(Map.query.all()) + config['offset'])
     url = request.form['url']
 
     exists_query = Map.query.filter_by(url = url).first()
