@@ -41,6 +41,18 @@ class Visit(db.Model):
         self.action = action
         self.visit_time = datetime.now()
 
+class Email_Apply(db.Model):
+    token = db.Column(db.String(65), primary_key=True)
+    realname = db.Column(db.String(15))
+    username = db.Column(db.String(15))
+    email = db.Column(db.String(255))
+
+    def __init__(self, realname, username, email, token):
+        token = token
+        realname = realname
+        username = username
+        email = email
+
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
@@ -88,9 +100,15 @@ def go(key):
 
         return redirect(result.url)
 
+@app.route('/email/verify', methods=['GET'])
+def email_verify(key):
+    pass
+
 if __name__ == '__main__':
     if sys.argv[1] == 'init':
         db.drop_all()
         db.create_all()
     elif sys.argv[1] == 'run':
         app.run(debug = True)
+    elif sys.argv[1] == 'migrate':
+        db.create_all()

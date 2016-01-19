@@ -4,6 +4,7 @@ itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
 mysql-connector-python==2.0.4
+requests==2.9.1
 short-url==1.2.1
 SQLAlchemy==1.0.11
 Werkzeug==0.11.3

@@ -14,23 +14,7 @@ def get_random_password(length):
     from random import choice
     from string import ascii_uppercase
 
-    
-
     return ''.join([choice(ascii_uppercase) for c in range(length)])
-
-def appliers_handler(appliers_file):
-
-    with open(appliers_file, encoding='utf8') as f:
-        f.readline()
-        appliers = csv.reader(f)
-
-        for applier in appliers:
-            name = applier[1]
-            email = applier[3]
-            token = generate_verify_token(email)
-            
-            send_verify_mail(email, name, token)
-            exit()
 
 def add_smtp_credentials(login, password):
     return requests.post(
@@ -58,7 +42,17 @@ def add_forward_route():
     pass
 
 def main():
-    appliers_handler('/Users/linroex/Downloads/NTUST.ME 信箱封測申請-report.csv')
+    with open('/Users/linroex/Downloads/NTUST.ME 信箱封測申請-report.csv', encoding='utf8') as f:
+        f.readline()
+        appliers = csv.reader(f)
+
+        for applier in appliers:
+            name = applier[1]
+            email = applier[3]
+            token = generate_verify_token(email)
+            
+            send_verify_mail(email, name, token)
+            exit()
 
 if __name__ == '__main__':
     main()
