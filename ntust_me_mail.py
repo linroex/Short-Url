@@ -75,7 +75,7 @@ def add_forward_route(login, forward_dest):
     )
 
 def main():
-    with open('/Users/linroex/Downloads/NTUST.ME 信箱封測申請-report.csv', encoding='utf8') as f:
+    with open('/Users/linroex/Downloads/NTUST.ME 信箱封測申請-report (1).csv', encoding='utf8') as f:
         f.readline()
         appliers = csv.reader(f)
 
@@ -89,7 +89,6 @@ def main():
 
             db.session.add(Email_Apply(name, login, email, token))
             db.session.commit()
-            exit()
 
 if __name__ == '__main__':
     main()
