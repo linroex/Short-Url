@@ -103,9 +103,9 @@ def go(key):
 
 @app.route('/email/verify', methods=['GET'])
 def email_verify():
-    applier = Email_Apply.query.get(request.form['token'])
+    applier = Email_Apply.query.get(request.args['token'])
 
-    MailS.add_smtp_credentials()
+    MailS.add_smtp_credentials(applier.username, MailS.get_random_password(12))
     MailS.add_forward_route()
     MailS.send_verify_mail()
 

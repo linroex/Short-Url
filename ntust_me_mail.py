@@ -44,9 +44,10 @@ def add_smtp_credentials(login, password):
         '{API_URL}/domains/{DOMAIN}/credentials'.format(API_URL=config['API_URL'], DOMAIN=config['DOMAIN']), 
         auth = HTTPBasicAuth('api', config['API_KEY']), 
         data = {
-        'login': login,
-        'password': password
-    })
+            'login': login,
+            'password': password
+        }
+    )
 
 def send_verify_mail(receiver, name, token):
     subject = 'NTUST.ME 電子信箱申請確認信'
