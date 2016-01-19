@@ -25,7 +25,7 @@ class Email_Apply(db.Model):
         self.token = token
         self.realname = realname
         self.username = username
-        self.email = email
+        self.email = email.lower()
 
 def generate_verify_token(email):
     import hashlib
@@ -51,7 +51,7 @@ def add_smtp_credentials(login, password):
 
 def send_mail(receiver, template, data):
     subject = 'NTUST.ME 電子信箱申請確認信'
-    content = open('templates/' + template, encoding='utf-8').read().format(**data)
+    content = open(config['BASE_PATH'] + '/templates/' + template, encoding='utf-8').read().format(**data)
 
     return requests.post(
         '{API_URL}/{DOMAIN}/messages'.format(API_URL=config['API_URL'], DOMAIN=config['DOMAIN']),
