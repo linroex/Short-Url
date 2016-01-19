@@ -1,5 +1,6 @@
 import sys
 
+import ntust_me_mail as MailS
 import short_url
 import Helper
 
@@ -48,10 +49,10 @@ class Email_Apply(db.Model):
     email = db.Column(db.String(255))
 
     def __init__(self, realname, username, email, token):
-        token = token
-        realname = realname
-        username = username
-        email = email
+        self.token = token
+        self.realname = realname
+        self.username = username
+        self.email = email
 
 @app.route('/', methods=['GET'])
 def index():
@@ -101,8 +102,12 @@ def go(key):
         return redirect(result.url)
 
 @app.route('/email/verify', methods=['GET'])
-def email_verify(key):
-    pass
+def email_verify():
+    applier = Email_Apply.query.get(request.form['token'])
+
+    MailS.add_smtp_credentials()
+    MailS.add_forward_route()
+    MailS.send_verify_mail()
 
 if __name__ == '__main__':
     if sys.argv[1] == 'init':

@@ -4,6 +4,29 @@ import requests
 from requests.auth import HTTPBasicAuth
 from Config import config
 
+from flask import Flask
+
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+
+app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', True)
+app.config['SQLALCHEMY_DATABASE_URI'] = config['db_connection_string']
+
+db = SQLAlchemy(app)
+
+class Email_Apply(db.Model):
+    token = db.Column(db.String(65), primary_key=True)
+    realname = db.Column(db.String(15))
+    username = db.Column(db.String(15))
+    email = db.Column(db.String(255))
+
+    def __init__(self, realname, username, email, token):
+        self.token = token
+        self.realname = realname
+        self.username = username
+        self.email = email
+
 def generate_verify_token(email):
     import hashlib
     from time import time
@@ -48,10 +71,14 @@ def main():
 
         for applier in appliers:
             name = applier[1]
+            login = applier[2]
             email = applier[3]
             token = generate_verify_token(email)
             
             send_verify_mail(email, name, token)
+
+            db.session.add(Email_Apply(name, login, email, token))
+            db.session.commit()
             exit()
 
 if __name__ == '__main__':
