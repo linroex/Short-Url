@@ -62,8 +62,17 @@ def send_verify_mail(receiver, name, token):
             "html": content,
             "o:tracking-opens":True})
 
-def add_forward_route():
-    pass
+def add_forward_route(login, forward_dest):
+    return requests.post(
+        '{API_URL}/routes'.format(API_URL=config['API_URL']),
+        auth = HTTPBasicAuth('api', config['API_KEY']), 
+        data = {
+            'priority': 0,
+            'description': '{login}@{DOMAIN} forward route'.format(login=login, DOMAIN=config['DOMAIN']),
+            "expression": 'match_recipient("{login}@{DOMAIN}")'.format(login=login, DOMAIN=config['DOMAIN']),
+            "action": 'forward("{dest}")'.format(dest=forward_dest)
+        }
+    )
 
 def main():
     with open('/Users/linroex/Downloads/NTUST.ME 信箱封測申請-report.csv', encoding='utf8') as f:

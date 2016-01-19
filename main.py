@@ -105,9 +105,17 @@ def go(key):
 def email_verify():
     applier = Email_Apply.query.get(request.args['token'])
 
-    MailS.add_smtp_credentials(applier.username, MailS.get_random_password(12))
-    MailS.add_forward_route()
-    MailS.send_verify_mail()
+    if applier == None:
+        return render_template('email_service_verify.html', message='申請失敗，請聯繫 linroex@ntust.me')
+    else:
+        MailS.add_smtp_credentials(applier.username, MailS.get_random_password(12))
+        MailS.add_forward_route(applier.username, applier.email)
+        MailS.send_verify_mail()
+
+        db.session.delete(applier)
+        db.session.commit()
+
+        return render_template('email_service_verify.html', message='申請成功，請檢視信箱，會有相關使用資訊')
 
 if __name__ == '__main__':
     if sys.argv[1] == 'init':
