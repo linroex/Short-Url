@@ -110,9 +110,12 @@ def email_verify():
     else:
         MailS.add_smtp_credentials(applier.username, MailS.get_random_password(12))
         MailS.add_forward_route(applier.username, applier.email)
-        MailS.send_verify_mail()
 
-        db.session.delete(applier)
+        email = applier.username + '@' + config['DOMAIN']
+
+        MailS.send_mail(email, 'success_mail.html', data = {'name': applier.realname, 'email_address': email})
+
+        # db.session.delete(applier)
         db.session.commit()
 
         return render_template('email_service_verify.html', message='申請成功，請檢視信箱，會有相關使用資訊')
