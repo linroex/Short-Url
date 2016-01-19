@@ -108,14 +108,16 @@ def email_verify():
     if applier == None:
         return render_template('email_service_verify.html', message='申請失敗，請聯繫 linroex@ntust.me')
     else:
-        MailS.add_smtp_credentials(applier.username, MailS.get_random_password(12))
+        password = MailS.get_random_password(12)
+
+        MailS.add_smtp_credentials(applier.username, password)
         MailS.add_forward_route(applier.username, applier.email)
 
         email = applier.username + '@' + config['DOMAIN']
 
-        MailS.send_mail(email, 'success_mail.html', data = {'name': applier.realname, 'email_address': email})
+        MailS.send_mail(email, 'success_mail.html', data = {'name': applier.realname, 'email_address': email, 'password': password})
 
-        # db.session.delete(applier)
+        db.session.delete(applier)
         db.session.commit()
 
         return render_template('email_service_verify.html', message='申請成功，請檢視信箱，會有相關使用資訊')
