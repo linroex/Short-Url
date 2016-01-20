@@ -49,8 +49,7 @@ def add_smtp_credentials(login, password):
         }
     )
 
-def send_mail(receiver, template, data):
-    subject = 'NTUST.ME 電子信箱申請確認信'
+def send_mail(receiver, subject, template, data):
     content = open(config['BASE_PATH'] + '/templates/' + template, encoding='utf-8').read().format(**data)
 
     return requests.post(
@@ -85,7 +84,7 @@ def main():
             email = applier[3]
             token = generate_verify_token(email)
             
-            send_mail(email, 'verify_mail.html', data = {'name': name, 'token': token})
+            send_mail(email, 'NTUST.ME 電子信箱申請確認信', 'verify_mail.html', data = {'name': name, 'token': token})
 
             db.session.add(Email_Apply(name, login, email, token))
             db.session.commit()

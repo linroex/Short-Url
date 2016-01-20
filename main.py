@@ -115,7 +115,7 @@ def email_verify():
 
         email = applier.username + '@' + config['DOMAIN']
 
-        MailS.send_mail(email, 'success_mail.html', data = {'name': applier.realname, 'email_address': email, 'password': password})
+        MailS.send_mail(email, 'NTUST.ME 電子信箱申請成功通知信', 'success_mail.html', data = {'name': applier.realname, 'email_address': email, 'password': password})
 
         db.session.delete(applier)
         db.session.commit()
