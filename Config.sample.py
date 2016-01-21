@@ -1,3 +1,5 @@
+import os
+
 config = {
     'db_connection_string': 'mysql+mysqlconnector://shortenurl:Taj0moV2Ab0Wyb6I@localhost/shorturl',
     'add_quota_per': 300,
@@ -6,5 +8,6 @@ config = {
     'API_KEY': '',
     'DOMAIN': '',
     'SENDER': '',
-    'secret': ''
+    'secret': '',
+    'BASE_PATH': os.path.dirname(os.path.realpath(__file__))
 }
