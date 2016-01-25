@@ -9,29 +9,36 @@
     <script>
     function getShortUrl(urls,i){
         var shortUrl="";
-        if(urls.length<=i)
+        if(urls.length==i)
         {
             return 0;
         }
         $.ajax({
                　　type: "post",
-               　　url: "./add",
+               　　url: "/add",
                    data:{'url':urls[i]},
                    dataType: "json",
                　　success: function(output){
-                        $("#result").html($("#result").html()+urls[i]+" to "+'<a href="'+output.url+'">'+output.url+'\r\n');
+                        var display_html;
+                        if(urls[i]===undefined)
+                            display_html = $("#result").html()+'<tr><td><input type="text" class="form-control" value="'+urls[i]+'"></td><td><input type="text" class="form-control" value="Error"><td></tr>';
+                        else
+                            display_html = $("#result").html()+'<tr><td><input type="text" class="form-control" value="'+urls[i]+'"></td><td><input type="text" class="form-control" value="'+output.url+'"><td></tr>';
+
+                        $("#result").html(display_html);
                         return 0;
             　　　},
                    error: function(){
 
-                        $("#result").html($("#result").html()+urls[i]+" to "+'Error!'+'\r\n');
+                        var display_html = $("#result").html()+'<tr><td><input type="text" class="form-control" value="'+urls[i]+'"></td><td><input type="text" class="form-control" value="Error"><td></tr>';
+                        $("#result").html(display_html);
                         return -1;
         　　　    },
                   complete: function(){getShortUrl(urls,i+1);}
                });
     }
     function sendRequest(){
-        if($('#urls').val()=="")
+        if($('#urls').val()==="")
         {
             $('.resultbox').hide();
             return -1;
@@ -39,6 +46,7 @@
         else
         {
             $('.resultbox').show();
+            $("#result").html('');
         }
 
         getShortUrl($('#urls').val().split('\n'),0);
@@ -46,36 +54,68 @@
     }
     </script>
     <style>
-    body{
-        background: #f6f6f6;
-    }
-    .resultbox{
-        display: none;
-    }
-    #result{
-        height: 150px;
-    }
+        body{
+            background: #f6f6f6;
+        }
+        #result{
+            font-size: 16px;
+        }
+
+        #content,#resultdiv{
+            margin-top:20px;
+            background-color:lightblue;
+            padding:5px 10px 20px 10px;
+        }
+        h4,h2{
+            font-weight: bold;
+        }
+        #result_title{
+            text-align:center;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="row">
-                <div  id="content" style="margin-top:20px; background-color:lightblue; padding:20px; 10px; 20px; 10px;">
-                    <h1>Hi</h1>
-                    <p>
-                        這是台科人專屬的短網址服務，目前十分簡易，歡迎有志參與改善的朋友和<a target="_blank" href="https:http://www.facebook.com/linroex">我</a>聯絡<br>  請在下方輸入要縮的網址，多行網址請換行。
-                    </p>
-                    <div class="form-group">
-                        <label for="comment">網址:</label>
-                        <textarea class="form-control" rows="5" id="urls"></textarea>
-                        <button type="button" style="margin-top:10px;" class="center-block btn btn-default" onclick="sendRequest()">Submit</button>
+        <div class="row" >
+                <div class="col-md-6">
+                    <div id="content">
+                        <h2>Hi</h2>
+                        <p>
+                            這是台科人專屬的短網址服務，目前十分簡易，歡迎有志參與改善的朋友和<a target="_blank" href="https:http://www.facebook.com/linroex">我</a>聯絡<br>  請在下方輸入要縮的網址，多行網址請換行。
+                        </p>
+                        <br>
+                        <div class="form-group">
+                            <h4>網址</h4>
+                            <textarea class="form-control" rows="10" id="urls"></textarea>
+                            <button type="button" style="margin-top:10px;" class="center-block btn btn-default" onclick="sendRequest()">Submit</button>
+                        </div>
                     </div>
-                    <h4 class="resultbox">轉換結果:</h4>
-                    <textarea id="result" class="resultbox form-control"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <div id="resultdiv">
+                        <h2 id="result_title">轉換結果</h4>
+                        <br>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Orignal Url</th><th>Short Url</th>
+                                </tr>
+                            </thead>
+                            <tbody id="result">
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control" value="http://www.ntust.edu.tw/">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" value="https://ntust.me/nz5zz">
+                                    <td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
         </div>
     </div>
-
 </body>
 </html>
