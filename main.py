@@ -99,7 +99,7 @@ def go(key):
         db.session.add(Visit(request.environ['REMOTE_ADDR'], 'go'))
         db.session.commit()
 
-        return redirect(result.url)
+        return redirect(result.url), 200
 
 @app.route('/email/verify', methods=['GET'])
 def email_verify():
