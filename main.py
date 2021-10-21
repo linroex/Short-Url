@@ -1,6 +1,5 @@
 import sys
 
-import ntust_me_mail as MailS
 import short_url
 import Helper
 
@@ -88,7 +87,7 @@ def add():
     db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add'))
     db.session.commit()
 
-    return jsonify({'url': request.url_root + key})
+    return jsonify({'url': config['domain'] + key})
 
 @app.route('/<key>', methods=['GET'])
 def go(key):
@@ -99,28 +98,7 @@ def go(key):
         db.session.add(Visit(request.environ['REMOTE_ADDR'], 'go'))
         db.session.commit()
 
-        return redirect(result.url), 200
-
-@app.route('/email/verify', methods=['GET'])
-def email_verify():
-    applier = Email_Apply.query.get(request.args['token'])
-
-    if applier == None:
-        return render_template('email_service_verify.html', message='申請失敗，請聯繫 linroex@ntust.me')
-    else:
-        password = MailS.get_random_password(12)
-
-        MailS.add_smtp_credentials(applier.username, password)
-        MailS.add_forward_route(applier.username, applier.email)
-
-        email = applier.username + '@' + config['DOMAIN']
-
-        MailS.send_mail(email, 'NTUST.ME 電子信箱申請成功通知信', 'success_mail.html', data = {'name': applier.realname, 'email_address': email, 'password': password})
-
-        db.session.delete(applier)
-        db.session.commit()
-
-        return render_template('email_service_verify.html', message='申請成功，請檢視信箱，會有相關使用資訊')
+        return redirect(result.url)
 
 if __name__ == '__main__':
     if sys.argv[1] == 'init':
