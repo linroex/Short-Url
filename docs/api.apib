@@ -3,11 +3,11 @@ HOST: https://nycu.one/api/v1
 
 # nycu.one
 
-NYCU 短網址服務，支援縮短網址與網址集成等。
+NYCU 短網址服務，支援縮短網址與網址集成等。 需要
 
-## 短網址 [/]
+## 短網址 [/shorten]
 
-### 新增短網址 [POST /shorten]
+### 新增短網址 [POST]
 
 + Request (application/json)
 
@@ -57,9 +57,13 @@ NYCU 短網址服務，支援縮短網址與網址集成等。
 
 ### 更新一般短網址 [PATCH /shorten/{slug}]
 
-需要 Auth
-
 + Request (application/json)
+
+    + Headers
+
+            Authorization: Basic {admin_token}
+
+    + Body
 
         {
             "slug": "fb_1"
@@ -86,7 +90,28 @@ NYCU 短網址服務，支援縮短網址與網址集成等。
                 "updated_at": "2021-11-11T23:55+08:00"
             }
 
-### 檢視 Linktree 短網址資訊 [GET /shorten/{slug}]
+## Linktree [/linktree]
+
+### 新增 Linktree [POST]
+
++ Request (application/json)
+
+        {
+            "slug": "linroex",
+            "urls": [
+                {"title": "臉書", "url": "https://facebook.com"},
+                {"title": "臉書", "url": "https://facebook.com"},
+                {"title": "臉書", "url": "https://facebook.com"},
+            ]
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {"status": 0, "message": "success", "slug": "linroex"}
+
+### 檢視 Linktree 短網址資訊 [GET /linktree/{slug}]
 
 + Response 200 (application/json)
 
@@ -122,11 +147,15 @@ NYCU 短網址服務，支援縮短網址與網址集成等。
                 "update_available": 0
             }
 
-### 更新 Linktree 短網址 [PATCH /shorten/{slug}]
-
-需要 Auth
+### 更新 Linktree 短網址 [PATCH /linktree/{slug}]
 
 + Request (application/json)
+
+    + Headers
+
+            Authorization: Basic {admin_token}
+
+    + Body
 
         {
             "slug": "fb_1"
