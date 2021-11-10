@@ -1,0 +1,168 @@
+FORMAT: 1A
+HOST: https://nycu.one/api/v1
+
+# nycu.one
+
+NYCU 短網址服務，支援縮短網址與網址集成等。
+
+## 短網址 [/]
+
+### 新增短網址 [POST /shorten]
+
++ Request (application/json)
+
+        [
+            {"id": 1, "url": "https://facebook.com", "slug": "fb"},
+            {"id": 2, "url": "https://facebook.com"},
+            {"id": 3, "url": "facebook.com"},
+            {"id": 4, "url": "https://facebook.com/lin", "slug": "fb"},
+            {"id": 5, "url": "https://facebook.coa/lin"}
+        ]
+
++ Response 200 (application/json)
+
+    + Body
+
+            [
+                {"id": 1, "status": 0, "message": "success", "slug": "fb"},
+                {"id": 2, "status": 0, "message": "success", "slug": "43gwqo"},
+                {"id": 3, "status": 101, "message": "url error"},
+                {"id": 4, "status": 102, "message": "slug used"},
+                {"id": 5, "status": 103, "message": "url error"}
+            ]
+
+### 檢視一般短網址資訊 [GET /shorten/{slug}]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "type": "link",
+                "url": "https://facebook.com",
+                "slug": "fb",
+                "usage": [
+                    {"date": "2021-11-01", "num": 100},
+                    {"date": "2021-11-02", "num": 100},
+                    {"date": "2021-11-03", "num": 100},
+                    {"date": "2021-11-04", "num": 100},
+                    {"date": "2021-11-05", "num": 100},
+                    {"date": "2021-11-06", "num": 100},
+                    {"date": "2021-11-07", "num": 100}
+                ],
+                "created_at": "2021-11-11T23:55+08:00",
+                "updated_at": "2021-11-11T23:55+08:00",
+                "update_available": 0
+            }
+
+### 更新一般短網址 [PATCH /shorten/{slug}]
+
+需要 Auth
+
++ Request (application/json)
+
+        {
+            "slug": "fb_1"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "type": "link",
+                "url": "https://facebook.com",
+                "slug": "fb",
+                "usage": [
+                    {"date": "2021-11-01", "num": 100},
+                    {"date": "2021-11-02", "num": 100},
+                    {"date": "2021-11-03", "num": 100},
+                    {"date": "2021-11-04", "num": 100},
+                    {"date": "2021-11-05", "num": 100},
+                    {"date": "2021-11-06", "num": 100},
+                    {"date": "2021-11-07", "num": 100}
+                ],
+                "created_at": "2021-11-11T23:55+08:00",
+                "updated_at": "2021-11-11T23:55+08:00"
+            }
+
+### 檢視 Linktree 短網址資訊 [GET /shorten/{slug}]
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "type": "linktree",
+                "urls": [
+                    {
+                        "url": "https://facebook.com",
+                        "usage": [
+                            {"date": "2021-11-01", "num": 100},
+                            {"date": "2021-11-02", "num": 100},
+                            {"date": "2021-11-03", "num": 100},
+                            {"date": "2021-11-04", "num": 100},
+                            {"date": "2021-11-05", "num": 100},
+                            {"date": "2021-11-06", "num": 100},
+                            {"date": "2021-11-07", "num": 100}
+                        ]
+                    }
+                ],
+                "usage": [
+                    {"date": "2021-11-01", "num": 100},
+                    {"date": "2021-11-02", "num": 100},
+                    {"date": "2021-11-03", "num": 100},
+                    {"date": "2021-11-04", "num": 100},
+                    {"date": "2021-11-05", "num": 100},
+                    {"date": "2021-11-06", "num": 100},
+                    {"date": "2021-11-07", "num": 100}
+                ],
+                "created_at": "2021-11-11T23:55+08:00",
+                "updated_at": "2021-11-11T23:55+08:00",
+                "update_available": 0
+            }
+
+### 更新 Linktree 短網址 [PATCH /shorten/{slug}]
+
+需要 Auth
+
++ Request (application/json)
+
+        {
+            "slug": "fb_1"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "type": "linktree",
+                "slug": "fb_1",
+                "urls": [
+                    {
+                        "url": "https://facebook.com",
+                        "usage": [
+                            {"date": "2021-11-01", "num": 100},
+                            {"date": "2021-11-02", "num": 100},
+                            {"date": "2021-11-03", "num": 100},
+                            {"date": "2021-11-04", "num": 100},
+                            {"date": "2021-11-05", "num": 100},
+                            {"date": "2021-11-06", "num": 100},
+                            {"date": "2021-11-07", "num": 100}
+                        ]
+                    }
+                ],
+                "usage": [
+                    {"date": "2021-11-01", "num": 100},
+                    {"date": "2021-11-02", "num": 100},
+                    {"date": "2021-11-03", "num": 100},
+                    {"date": "2021-11-04", "num": 100},
+                    {"date": "2021-11-05", "num": 100},
+                    {"date": "2021-11-06", "num": 100},
+                    {"date": "2021-11-07", "num": 100}
+                ],
+                "created_at": "2021-11-11T23:55+08:00",
+                "updated_at": "2021-11-11T23:55+08:00"
+            }
+
