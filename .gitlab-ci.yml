@@ -45,5 +45,5 @@ deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
     - echo "Deploying application..."
-    - docker run -d --name mycontainer -p 80:80 myimage
+    - python main.py
     - echo "Application successfully deployed."
