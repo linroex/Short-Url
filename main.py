@@ -4,7 +4,7 @@ import short_url
 import Helper
 
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from Config import config
 
@@ -35,29 +35,55 @@ class Visit(db.Model):
     ip = db.Column(db.String(15))
     visit_time = db.Column(db.DateTime())
     action = db.Column(db.Enum('add', 'go'))
+    slug = db.Column(db.String(10))
 
-    def __init__(self, ip, action):
+    def __init__(self, ip, action, slug):
         self.ip = ip
         self.action = action
         self.visit_time = datetime.now()
-
-class Email_Apply(db.Model):
-    token = db.Column(db.String(65), primary_key=True)
-    realname = db.Column(db.String(15))
-    username = db.Column(db.String(15))
-    email = db.Column(db.String(255))
-
-    def __init__(self, realname, username, email, token):
-        self.token = token
-        self.realname = realname
-        self.username = username
-        self.email = email
+        self.slug = slug
 
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
-@app.route('/add', methods=['POST'])
+@app.route('/api/v1/shorten/<key>', methods=['GET'])
+@Helper.jsonp
+def get_detail(key):
+    url_ = Map.query.filter_by(key=key).first()
+
+    usage = (db.session.query(
+            db.func.date(Visit.visit_time), 
+            db.func.count('*')
+        )
+        .filter(Visit.slug==key)
+        .filter(Visit.visit_time >= datetime.now() - timedelta(days=7))
+        .filter(Visit.action=='go')
+        .group_by(db.func.date(Visit.visit_time))
+        .all())
+
+    usage_ = []
+    for row in usage:
+        usage_.append({
+            'date': str(row[0]),
+            'num': row[1]
+        })
+
+    if url_ is None:
+        return jsonify({}), 404
+    else:
+        # return jsonify(usage_)
+        return jsonify({
+            'type': 'link',
+            'url': url_.url,
+            'slug': url_.key,
+            'usage': usage_,
+            'created_at': str(url_.created),
+            'updated_at': str(url_.created),
+            'update_available': 0
+        })
+
+@app.route('/api/v1/shorten', methods=['POST'])
 @Helper.jsonp
 def add():
 
@@ -95,7 +121,7 @@ def go(key):
     if result == None:
         return jsonify({'message': 'Not Found'})
     else:
-        db.session.add(Visit(request.environ['REMOTE_ADDR'], 'go'))
+        db.session.add(Visit(request.environ['REMOTE_ADDR'], 'go', result.key))
         db.session.commit()
 
         return redirect(result.url)
