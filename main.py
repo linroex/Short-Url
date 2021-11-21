@@ -3,6 +3,8 @@ import sys
 import short_url
 import Helper
 
+import requests
+
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
 
@@ -72,7 +74,7 @@ def get_detail(key):
     if url_ is None:
         return jsonify({}), 404
     else:
-        # return jsonify(usage_)
+        
         return jsonify({
             'type': 'link',
             'url': url_.url,
@@ -83,7 +85,7 @@ def get_detail(key):
             'update_available': 0
         })
 
-@app.route('/api/v1/shorten', methods=['POST'])
+@app.route('/add', methods=['POST'])
 @Helper.jsonp
 def add():
 
@@ -100,8 +102,16 @@ def add():
         return jsonify({'message': 'Today usage is exceed'})
 
     key = short_url.encode_url(len(Map.query.all()) + config['offset'])
-    url = request.form['url']
-
+    url = request.form['url'].strip()
+    
+    try:
+        if requests.get(url, timeout=1, verify=False).status_code == 404:
+            return jsonify({'message': 'site not found'})
+    except requests.exceptions.ConnectionError:
+        return jsonify({'message': 'site not found'})
+    except requests.exceptions.ReadTimeout:
+        pass
+    
     exists_query = Map.query.filter_by(url = url).first()
     
     if exists_query != None:
@@ -110,7 +120,7 @@ def add():
     else:
         db.session.add(Map(key, url))
 
-    db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add'))
+    db.session.add(Visit(request.environ['REMOTE_ADDR'], 'add', key))
     db.session.commit()
 
     return jsonify({'url': config['domain'] + key})
