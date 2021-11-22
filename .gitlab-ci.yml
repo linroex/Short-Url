@@ -46,6 +46,7 @@ deploy-job:      # This job runs in the deploy stage.
     - echo "Deploying application..."
     - set -e
     - mkdir -p ~/.ssh
+    - touch ~/.ssh/config
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - "command -v ssh-agent > /dev/null || (apt update -y && apt install openssh-client -y)"
     - eval $(ssh-agent -s)
