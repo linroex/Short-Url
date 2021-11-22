@@ -42,7 +42,6 @@ stages:          # List of stages for jobs, and their order of execution
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-
   script:
     - echo "Deploying application..."
     - set -e
@@ -50,7 +49,7 @@ deploy-job:      # This job runs in the deploy stage.
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - "command -v ssh-agent > /dev/null || (apt update -y && apt install openssh-client -y)"
     - eval $(ssh-agent -s)
-    - echo "$PROD_SSH_KEY" | tr -d '\r' | ssh-add -
+    - ssh-agent bash | echo "$PROD_SSH_KEY" | tr -d '\r' | ssh-add -
 
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
