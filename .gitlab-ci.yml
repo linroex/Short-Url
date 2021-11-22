@@ -42,9 +42,15 @@ lint-test-job:   # This job also runs in the test stage.
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  image: 
   script:
     - echo "Deploying application..."
-    - /usr/local/bin/python -m pip install --upgrade pip
-    - pip install -r requirements.txt
-    - python main.py
+    - echo "$PROD_SSH_KEY" | tr -d '\r' | aah-add -
+    - PROD_SERVER=$PROD_SERVER_IP
+    - ssh root@${PROD_SERVER} 'rm -rf /home/linroex/prod_dict/'
+    - ssh root@${PROD_SERVER} 'cd /home/linroex/ && git clone http://git:nyxrbMKXChH1WCPRmG83@gl-cloud.mylabs.space/gitlab-instance-01cda2c6/nycu.one.git prod_dict'
+    - ssh root@${PROD_SERVER} 'pkill gunicorn'
+    - ssh root@${PROD_SERVER} 'cat /home/linroex/nycu.one/Config.py > /home/linroex/prod_dict/Config.py'
+    - ssh root@${PROD_SERVER} 'cd /home/linroex/prod_dict/ && python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt'
+    - ssh root@${PROD_SERVER} 'sudo /home/linroex/prod_dict/.env/bin/gunicorn -b 0.0.0.0:80 main:app'
     - echo "Application successfully deployed."
