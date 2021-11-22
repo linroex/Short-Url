@@ -60,5 +60,5 @@ deploy-job:      # This job runs in the deploy stage.
     - ssh root@${PROD_SERVER} 'if pgrep gunicorn; then pkill gunicorn; fi'
     - ssh root@${PROD_SERVER} 'cat /home/linroex/nycu.one/Config.py > /home/linroex/prod_dict/Config.py'
     - ssh root@${PROD_SERVER} 'cd /home/linroex/prod_dict/ && python3 -m venv .venv && source .venv/bin/activate && pip3 install -r requirements.txt && pip3 install gunicorn'
-    - ssh root@${PROD_SERVER} 'sudo /home/linroex/prod_dict/.env/bin/gunicorn -b 0.0.0.0:80 main:app'
+    - ssh root@${PROD_SERVER} 'source /home/linroex/prod_dict/.venv/bin/activate && sudo /home/linroex/prod_dict/.env/bin/gunicorn -b 0.0.0.0:80 main:app'
     - echo "Application successfully deployed."
