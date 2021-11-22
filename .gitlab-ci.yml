@@ -18,7 +18,7 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+.build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
     - echo "Compiling the code..."
@@ -26,14 +26,14 @@ build-job:       # This job runs in the build stage, which runs first.
     - pip install -r requirements.txt
     - echo "Compile complete."
 
-unit-test-job:   # This job runs in the test stage.
+.unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   script:
     - echo "Running unit tests... This will take about 60 seconds."
     - sleep 1
     - echo "Code coverage is 90%"
 
-lint-test-job:   # This job also runs in the test stage.
+.lint-test-job:   # This job also runs in the test stage.
   stage: test    # It can run at the same time as unit-test-job (in parallel).
   script:
     - echo "Linting code... This will take about 10 seconds."
@@ -50,7 +50,7 @@ deploy-job:      # This job runs in the deploy stage.
     - echo -e "Host *\n\StrictHostKeyChecking no\n\n" > ~/.ssh/config
     - "command -v ssh-agent > /dev/null || (apt update -y && apt install openssh-client -y)"
     - eval $(ssh-agent -s)
-    - echo "$PROD_SSH_KEY" | tr -d '\r' | aah-add -
+    - echo "$PROD_SSH_KEY" | tr -d '\r' | ssh-add -
     - PROD_SERVER=$PROD_SERVER_IP
     - ssh root@${PROD_SERVER} 'rm -rf /home/linroex/prod_dict/'
     - ssh root@${PROD_SERVER} 'cd /home/linroex/ && git clone http://git:nyxrbMKXChH1WCPRmG83@gl-cloud.mylabs.space/gitlab-instance-01cda2c6/nycu.one.git prod_dict'
