@@ -49,8 +49,7 @@ deploy-job:      # This job runs in the deploy stage.
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - "command -v ssh-agent > /dev/null || (apt update -y && apt install openssh-client -y)"
     - eval $(ssh-agent -s)
-    - ssh-agent bash | echo "$PROD_SSH_KEY" | tr -d '\r' | ssh-add -
-
+    - ssh-add < (echo "$PROD_SSH_KEY")
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - PROD_SERVER=$PROD_SERVER_IP
