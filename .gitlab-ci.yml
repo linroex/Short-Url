@@ -51,6 +51,9 @@ deploy-job:      # This job runs in the deploy stage.
     - "command -v ssh-agent > /dev/null || (apt update -y && apt install openssh-client -y)"
     - eval $(ssh-agent -s)
     - echo "$PROD_SSH_KEY" | tr -d '\r' | ssh-add -
+
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
     - PROD_SERVER=$PROD_SERVER_IP
     - ssh root@${PROD_SERVER} 'rm -rf /home/linroex/prod_dict/'
     - ssh root@${PROD_SERVER} 'cd /home/linroex/ && git clone http://git:nyxrbMKXChH1WCPRmG83@gl-cloud.mylabs.space/gitlab-instance-01cda2c6/nycu.one.git prod_dict'
