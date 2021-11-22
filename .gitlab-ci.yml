@@ -22,8 +22,8 @@ build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
     - echo "Compiling the code..."
-    #- /usr/local/bin/python -m pip install --upgrade pip
-    #- pip install -r requirements.txt
+    - /usr/local/bin/python -m pip install --upgrade pip
+    - pip install -r requirements.txt
     - echo "Compile complete."
 
 unit-test-job:   # This job runs in the test stage.
@@ -42,10 +42,15 @@ lint-test-job:   # This job also runs in the test stage.
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  image: 
+  image: ubuntu
   script:
     - echo "Deploying application..."
-    - echo "$PROD_SSH_KEY" | tr -d '\r' | ssh-add -
+    - set -e
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\StrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - "command -v ssh-agent > /dev/null || (apt update -y && apt install openssh-client -y)"
+    - eval $(ssh-agent -s)
+    - echo "$PROD_SSH_KEY" | tr -d '\r' | aah-add -
     - PROD_SERVER=$PROD_SERVER_IP
     - ssh root@${PROD_SERVER} 'rm -rf /home/linroex/prod_dict/'
     - ssh root@${PROD_SERVER} 'cd /home/linroex/ && git clone http://git:nyxrbMKXChH1WCPRmG83@gl-cloud.mylabs.space/gitlab-instance-01cda2c6/nycu.one.git prod_dict'
