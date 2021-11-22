@@ -42,7 +42,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-  image: ubuntu
+
   script:
     - echo "Deploying application..."
     - set -e
