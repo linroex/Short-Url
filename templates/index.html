@@ -15,12 +15,12 @@
         }
         $.ajax({
                　　type: "post",
-               　　url: "/api/v1/shorten",
+               　　url: "/add",
                    data:{'url':urls[i]},
                    dataType: "json",
                　　success: function(output){
                         var display_html;
-                        if(urls[i]===undefined)
+                        if(urls[i]===undefined || output.url === undefined)
                             display_html = $("#result").html()+'<tr><td><input type="text" class="form-control" value="'+urls[i]+'"></td><td><input type="text" class="form-control" value="Error"><td></tr>';
                         else
                             display_html = $("#result").html()+'<tr><td><input type="text" class="form-control" value="'+urls[i]+'"></td><td><input type="text" class="form-control" value="'+output.url+'"><td></tr>';
